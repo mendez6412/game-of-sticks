@@ -23,5 +23,7 @@ class AI:
     def learn_after_lose(self):
         for item in self.chosen:
             if len(self.chosen[item]) > 0:
-                if Counter(self.hats[item])[item] > 1:
-                    self.hats[item].remove(item)
+                if Counter(self.hats[item])[self.chosen[item][0]] > 1:
+                    self.hats[item].remove(self.chosen[item][0])
+        for item in self.chosen:
+            self.chosen[item] = []

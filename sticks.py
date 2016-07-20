@@ -104,9 +104,10 @@ def training_engine(computer, computer2, total_sticks, players):
         if players[0] == 'Computer2':
             remaining_sticks -= computer2.comp_turn(remaining_sticks)
         if remaining_sticks <= 0:
-            if players[0] == 'Computer2':
+            # I had these following 4 lines swapped before, making an unintelligent AI
+            if players[0] == 'Computer1':
                 computer.learn_after_lose()
-            elif players[0] == 'Computer1':
+            elif players[0] == 'Computer2':
                 computer.learn_after_win()
             break
         players = players[::-1]
