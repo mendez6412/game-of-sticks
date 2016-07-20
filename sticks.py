@@ -12,7 +12,7 @@ def is_pvp_game_over(players):
 def is_pva_game_over(computer, total_sticks, players):
     response = input("Do you want to play again? [Y]es or [N]o: ").upper()
     if response not in ['Y', 'N']:
-        is_pva_game_over(players)
+        is_pva_game_over(computer, total_sticks, players)
     if response == 'Y':
         pva_main(computer, total_sticks, players)
     else:
@@ -31,12 +31,14 @@ def take_sticks():
     return take
 
 def humans_or_computer():
-    friends = input("Do you want to play with [F]riends or the [C]omputer: ").upper()
-    if friends in ['F', 'C']:
+    friends = input("Do you want to play with [F]riends or the [C]omputer or the [S]uperComputer: ").upper()
+    if friends in ['F', 'C', 'S']:
         if friends == 'F':
             return ["Player 1", "Player 2"]
-        else:
+        elif friends == 'C':
             return ["You, the Human", 'Computer']
+        else:
+            return ['Computer1', 'Computer2']
     else:
         print("Invalid input, please only enter F or C...")
         return humans_or_computer()
@@ -57,8 +59,7 @@ def get_total_sticks():
     else:
         get_total_sticks()
 
-def pvp_main(players):
-    total_sticks = get_total_sticks()
+def pvp_main(total_sticks, players):
     pvp_engine(total_sticks, players)
 
 def pvp_engine(total_sticks, players):
@@ -78,8 +79,6 @@ def pva_main(computer, total_sticks, players):
 
 def pva_engine(computer, total_sticks, players):
     remaining_sticks = total_sticks
-    print("here")
-    print(type(computer))
     while remaining_sticks >= 1:
         print("Sticks on the table: ", remaining_sticks)
         print(players[0], "'s turn")
@@ -97,13 +96,66 @@ def pva_engine(computer, total_sticks, players):
         players = players[::-1]
     is_pva_game_over(computer, total_sticks, players)
 
+def training_engine(computer, computer2, total_sticks, players):
+    remaining_sticks = total_sticks
+    while remaining_sticks >= 1:
+        if players[0] == 'Computer1':
+            remaining_sticks -= computer.comp_turn(remaining_sticks)
+        if players[0] == 'Computer2':
+            remaining_sticks -= computer2.comp_turn(remaining_sticks)
+        if remaining_sticks <= 0:
+            if players[0] == 'Computer2':
+                computer.learn_after_lose()
+            elif players[0] == 'Computer1':
+                computer.learn_after_win()
+            break
+        players = players[::-1]
+
+def loading(simulations_remaining):
+    if simulations_remaining == 95000:
+        print("Please wait as we simulate an epic duel...")
+    elif simulations_remaining == 90000:
+        print("Don't Panic... in large, friendly letters")
+    elif simulations_remaining == 80000:
+        print("I promise, we're almost there...")
+    elif simulations_remaining == 50000:
+        print("Oops, I have to start over...")
+    elif simulations_remaining == 45000:
+        print("I may not have gone where I intended to go, ")
+    elif simulations_remaining == 35000:
+        print("but I think I've ended up where I needed to be.")
+    elif simulations_remaining == 25000:
+        print("Sub-Sampling Water Data")
+    elif simulations_remaining == 15000:
+        print("Prioritizing Landmarks")
+    elif simulations_remaining == 4000:
+        print("4")
+    elif simulations_remaining == 3000:
+        print("3")
+    elif simulations_remaining == 2000:
+        print("2")
+    elif simulations_remaining == 1000:
+        print("1")
+    elif simulations_remaining == 10:
+        print("phew...")
+
 def main():
-    print("Welcome...")
+    print("Welcome to Sticks! Don't pick up the last stick! Sticks!")
     total_sticks = get_total_sticks()
     computer = AI(total_sticks)
+    computer2 = AI(total_sticks)
     players = humans_or_computer()
-    if players[1] != 'Computer':
-        pvp_main(players)
+    if players[1] == 'Player 2':
+        pvp_main(total_sticks, players)
+    if players[0] == 'Computer1' and players[1] == 'Computer2':
+        print("Please wait while the computer duels it out... imagine Transformers or something")
+        simulations_remaining = 100000
+        while simulations_remaining > 0:
+            loading(simulations_remaining)
+            training_engine(computer, computer2, total_sticks, players)
+            simulations_remaining -= 1
+        players = ['You, the Human', "Computer"]
+        pva_main(computer, total_sticks, players)
     else:
         pva_main(computer, total_sticks, players)
 
